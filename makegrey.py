@@ -10,12 +10,12 @@ def displayImage (frame, frame_name='rekt'):
             cv2.destroyAllWindows()
             break
 
-dir = './images/'
+dir = './images/color/'
 imagelist = glob.glob(dir+'*.JPG')
-
-print imagelist
 
 for name in imagelist:
     im = cv2.imread(name)
     im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite(name, im);
+    name = name.replace("color", "gray")
+    print name
+    cv2.imwrite(name, im)

@@ -42,7 +42,7 @@ void mouseCB(int event, int x, int y, int flags, void* userdata)
     if(mousedown)
     {
         if(pts.size() > 2 )
-            line(img,Point(x,y),pts[pts.size()-1],Scalar(0,0,255), 10);
+            line(img,Point(x,y),pts[pts.size()-1],Scalar(0, 0, 0), 10);
 
         pts.push_back(Point(x,y));
         imwrite ("../images/maskedimage.JPG", img);
