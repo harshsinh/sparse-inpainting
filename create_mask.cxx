@@ -5,47 +5,47 @@
 using namespace cv;
 using namespace std;
 
-Mat src,cloneimg;
+Mat src, cloneimg;
 bool mousedown;
 vector<vector<Point> > contours;
 vector<Point> pts;
 
-void onMouse( int event, int x, int y, int flags, void* userdata )
+void mouseCB(int event, int x, int y, int flags, void* userdata)
 {
     Mat img = *((Mat *)userdata);
 
-    if( event == EVENT_LBUTTONDOWN )
+    if (event == EVENT_LBUTTONDOWN)
     {
         mousedown = true;
         contours.clear();
         pts.clear();
     }
 
-    if( event == EVENT_LBUTTONUP )
+    if(event == EVENT_LBUTTONUP)
     {
         mousedown = false;
         if(pts.size() > 2 )
         {
-            Mat mask(img.size(),CV_8UC1);
+            Mat mask(img.size(), CV_8UC1);
             mask = 0;
             contours.push_back(pts);
-            drawContours(mask,contours,0,Scalar(255),-1);
-            Mat masked(img.size(),CV_8UC3,Scalar(255,255,255));
-            src.copyTo(masked,mask);
+            drawContours(mask, contours, 0, Scalar(255), 10);
+            Mat masked(img.size(), CV_8UC3, Scalar(255,255,255));
+            src.copyTo(masked, mask);
             src.copyTo(cloneimg);
             namedWindow("Masked Image", WINDOW_NORMAL);
             imshow ("Masked Image", masked);
-            imwrite ("mask.jpg", masked);
+            imwrite ("../images/mask.JPG", masked);
         }
     }
 
     if(mousedown)
     {
         if(pts.size() > 2 )
-            line(img,Point(x,y),pts[pts.size()-1],Scalar(0,255,0));
+            line(img,Point(x,y),pts[pts.size()-1],Scalar(0,0,255), 10);
 
         pts.push_back(Point(x,y));
-
+        imwrite ("../images/maskedimage.JPG", img);
         imshow("Create Mask", img);
     }
 }
@@ -62,7 +62,7 @@ int main (int argc, const char** argv)
 
     namedWindow("Create Mask", WINDOW_NORMAL);
     cloneimg = src.clone();
-    setMouseCallback("Create Mask", onMouse, &cloneimg);
+    setMouseCallback("Create Mask", mouseCB, &cloneimg);
     imshow("Create Mask", src);
 
     waitKey(0);

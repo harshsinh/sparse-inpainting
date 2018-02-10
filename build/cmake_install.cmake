@@ -1,4 +1,4 @@
-# Install script for directory: /home/harsh/catkin_ws/src/inpainting
+# Install script for directory: /home/harsh/workspace/git/inpainting
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/harsh/catkin_ws/src/inpainting/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/harsh/workspace/git/inpainting/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
