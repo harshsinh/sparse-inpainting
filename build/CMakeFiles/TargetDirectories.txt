@@ -1,3 +1,0 @@
-/home/harsh/workspace/git/inpainting/build/CMakeFiles/rebuild_cache.dir
-/home/harsh/workspace/git/inpainting/build/CMakeFiles/edit_cache.dir
-/home/harsh/workspace/git/inpainting/build/CMakeFiles/inpainting.dir
