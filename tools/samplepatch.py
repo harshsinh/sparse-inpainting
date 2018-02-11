@@ -4,8 +4,8 @@ import numpy as np
 from random import randint
 
 #Read Images from directory
-imlist = glob.glob('./images/gray/*.JPG')
-dictdir = './images/dictionary/'
+imlist = glob.glob('../images/gray/*.JPG')
+dictdir = '../images/dictionary/'
 
 #Constants
 PATCHSIZE = [8, 8]
@@ -25,11 +25,15 @@ stacked_image = stacked_image[:, (IMAGESIZE[1]-1):]
 print stacked_image.shape
 
 #temp_image is to concatenate the other portions
+#dictionary128 and dictionary256
 temp_image = np.zeros((64, 1), dtype=np.uint8)
+dictionary128 = np.zeros((8*PATCHSIZE[0], 16*PATCHSIZE[0]), dtype=np.uint8)
+dictionary256 = np.zeros((16*PATCHSIZE[0], 16*PATCHSIZE[0]), dtype=np.uint8)
+
 for i in range(DICTIONARYSIZE):
     topleft = [randint(0, stacked_image.shape[0]-9), randint(0, stacked_image.shape[1]-9)]
     patch = stacked_image[topleft[0]:(topleft[0] + PATCHSIZE[0]), topleft[1]:(topleft[1] + PATCHSIZE[0])]
-    cv2.imwrite(dictdir + str(i)+'.JPG', patch)
+    cv2.imwrite(dictdir + str(i)+'.png', patch)
     patch = np.reshape(patch, (64, 1))
     temp_image = np.concatenate((temp_image, patch), axis=1)
 
@@ -38,4 +42,7 @@ print temp_image.shape
 dictionary = temp_image[:, 1:]
 print dictionary.shape
 
-cv2.imwrite("dictionary.JPG", dictionary)
+cv2.imwrite(dictdir + "dictionary.png", dictionary)
+
+#Dictionary128 contains the first 128 patches
+#Dictionary256 contains all the patches

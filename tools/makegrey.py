@@ -10,7 +10,7 @@ def displayImage (frame, frame_name='rekt'):
             cv2.destroyAllWindows()
             break
 
-dir = './images/color/'
+dir = '../images/color/'
 imagelist = glob.glob(dir+'*.JPG')
 
 for name in imagelist:
