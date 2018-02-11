@@ -1,5 +1,8 @@
 #include "../include/sparse_inpaint.h"
 
+#include "../include/omp.h"
+#include "../include/irls.h"
+
 #include <iostream>
 #include <string>
 
