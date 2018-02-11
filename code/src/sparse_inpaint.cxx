@@ -1,6 +1,5 @@
-#include "opencv2/imgproc.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/core.hpp"
+#include "../include/sparse_inpaint.h"
+
 #include <iostream>
 #include <string>
 

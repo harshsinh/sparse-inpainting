@@ -1,9 +1,5 @@
 #include "../include/omp.h"
 
-#include "opencv2/core.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/highgui.hpp"
-
 #include <vector>
 
 cv::Mat_<double> omp (const cv::Mat_<double>& Dict, const cv::Mat_<double>& X, const double sparcity)
@@ -52,10 +48,4 @@ cv::Mat_<double> omp (const cv::Mat_<double>& Dict, const cv::Mat_<double>& X, c
     }
 
     return sparse_rep;
-}
-
-int main (int argc, char** argv)
-{
-
-    return 0;
 }
