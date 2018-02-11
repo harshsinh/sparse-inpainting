@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
 project (inpainting)
 find_package (OpenCV REQUIRED)
-add_executable (inpainting create_mask.cxx )
-target_link_libraries (inpainting ${OpenCV_LIBS} )
+add_executable (create_mask create_mask.cxx )
+target_link_libraries (create_mask ${OpenCV_LIBS} )

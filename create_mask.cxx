@@ -35,7 +35,8 @@ void mouseCB(int event, int x, int y, int flags, void* userdata)
             src.copyTo(cloneimg);
             namedWindow("Masked Image", WINDOW_NORMAL);
             imshow ("Masked Image", masked);
-            imwrite ("../images/mask.JPG", masked);
+            imwrite ("../images/mask.JPG", mask);
+            imwrite ("../images/masked.JPG", masked);
         }
     }
 
