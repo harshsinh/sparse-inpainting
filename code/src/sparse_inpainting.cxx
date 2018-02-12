@@ -137,6 +137,8 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
     std::map<std::pair<int, int>, double> priorities;
     getBoundary (priorities, M);
 
+    int count = 0;
+
     while (priorities.size())
     {
         /*Choose patch with max priority*/
@@ -184,8 +186,12 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
 
         // cv::imshow ("Complete Mask", M);        
         // cv::imshow ("Mask", maskPsz);
-        cv::imshow ("Selected Patch", Xsz);
-        cv::imshow ("Proposed Patch", Rsz);
+        if (count == 0)
+        {
+            cv::imshow ("Selected Patch", Xsz);
+            cv::imshow ("Proposed Patch", Rsz);
+            count++;
+        }
 
         R.copyTo (X, maskP);
         
@@ -208,5 +214,5 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         // cv::imshow ("image", I);
     }
 
-    return I;
+    return I*255;
 }

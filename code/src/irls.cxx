@@ -26,6 +26,7 @@ cv::Mat_<double> irls (const cv::Mat_<double>& D, const cv::Mat_<double>& X, con
 
     double error = cv::norm(r);
 
+    int count  = 0;
     while (error > epsilon)
     {
         auto minor_product = (D * (w * w) * D.t());
@@ -34,10 +35,12 @@ cv::Mat_<double> irls (const cv::Mat_<double>& D, const cv::Mat_<double>& X, con
         w = updateW (a);
 
         r = X - D*a;
-        
-        std::cout << "Size of a: " << a.size() << std::endl;
+
         error = cv::norm(r);
         std::cout << "Error: " << error << std::endl;
+
+        count++;
+        std::cout << "Iteration : " << count << std::endl;
     }
 
     return a;

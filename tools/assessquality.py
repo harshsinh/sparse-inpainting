@@ -13,3 +13,4 @@ print "NIQE Value for the original image is :" + str(niqe.niqe(original/255))
 for name in results:
     im = scipy.misc.imread (name).astype(numpy.float32)
     value = niqe.niqe(im/255)
+    print "NIQE Value of the image " + name + "is : " + str(value)
