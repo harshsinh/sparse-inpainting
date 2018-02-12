@@ -4,6 +4,7 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/core.hpp"
 
+#include <map>
 
 cv::Mat patch (const cv::Point& p, const cv::Mat& image, int size);
 
@@ -13,10 +14,10 @@ cv::Mat_<double> normalizeDict (const cv::Mat_<double>& dict);
 
 cv::Mat removeRows (const cv::Mat& mat, const cv::Mat_<bool>& rows_);
 
-void getBoundary (std::vector<cv::Point>& B, std::vector<double>& priority,
+void getBoundary (std::map<std::pair<int, int>, double>& priorities,
                   cv::Mat& M);
 
-void updateBoundary (std::vector<cv::Point>& B, std::vector<double>& p_,
+void updateBoundary (std::map<std::pair<int, int>, double>& priorities,
                      cv::Mat& M, cv::Point Last, int LastID);
 
 cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,

@@ -15,6 +15,9 @@ IMAGESIZE = [1280, 960]
 #Stacked Image contains all of the images for uniform sampling
 stacked_image = np.empty((IMAGESIZE), dtype=np.uint8)
 
+dictionary128 = np.zeros((8*PATCHSIZE[0], 16*PATCHSIZE[0]), dtype=np.uint8)
+dictionary256 = np.zeros((16*PATCHSIZE[0], 16*PATCHSIZE[0]), dtype=np.uint8)
+
 for name in imlist:
     im = cv2.imread(name, cv2.IMREAD_GRAYSCALE)
     stacked_image = np.concatenate((stacked_image, im), axis=1)
@@ -27,8 +30,6 @@ print stacked_image.shape
 #temp_image is to concatenate the other portions
 #dictionary128 and dictionary256
 temp_image = np.zeros((64, 1), dtype=np.uint8)
-dictionary128 = np.zeros((8*PATCHSIZE[0], 16*PATCHSIZE[0]), dtype=np.uint8)
-dictionary256 = np.zeros((16*PATCHSIZE[0], 16*PATCHSIZE[0]), dtype=np.uint8)
 
 for i in range(DICTIONARYSIZE):
     topleft = [randint(0, stacked_image.shape[0]-9), randint(0, stacked_image.shape[1]-9)]
@@ -45,4 +46,4 @@ print dictionary.shape
 cv2.imwrite(dictdir + "dictionary.png", dictionary)
 
 #Dictionary128 contains the first 128 patches
-#Dictionary256 contains all the patches
+#Dictionary256 contains all the patches`

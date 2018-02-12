@@ -71,13 +71,11 @@ cv::Mat removeRows (const cv::Mat& mat, const cv::Mat_<bool>& rows_)
     return removed_mat;
 }
 
-void getBoundary (std::vector<cv::Point>& B,
-                  std::vector<double>& priority,
+void getBoundary (std::map<std::pair<int, int>, double>& priorities,
                   cv::Mat& M)
 {
 
-    B.clear();
-    priority.clear();
+    priorities.clear();
 
     for (int i = 3; i < M.rows - 4; ++i)
     {
@@ -88,59 +86,36 @@ void getBoundary (std::vector<cv::Point>& B,
 
             if (sum < 255*9 && sum > 0) {
                 
-                B.push_back (cv::Point(i, j));
                 region = patch (cv::Point(i, j), M, 8);
                 double sum = cv::sum(region)[0];
-                priority.push_back (1/sum);
-
+                
+                priorities.emplace (std::pair<int, int> (i, j), 1 / sum);
             }
-
         }
     }
-    return;
 }
 
-void updateBoundary (std::vector<cv::Point>& B, std::vector<double>& p_,
+void updateBoundary (std::map<std::pair<int, int>, double>& priorities,
                      cv::Mat& M, cv::Point Last, int LastID)
 {
-
-    auto start = B.begin();
-    auto end   = B.end();
-    auto p_begin = p_.begin();
-
     for (int i = Last.x - 5; i <= Last.x + 5; ++i)
     {
-
         for (int j = Last.y - 5; j <= Last.y + 5; ++j)
         {
-
-            auto f = std::find (start, end, cv::Point(i, j));
-
-            if (f != end) {
-
-                p_.erase ((f - start) + p_begin);
-                B.erase (f);
-                
-                start = B.begin();
-                end = B.end();
-                p_begin = p_.begin();
-
-            }
+            auto it = priorities.find(std::pair<int, int> (i, j));
+            if (it != priorities.end())
+                priorities.erase (it);
 
             cv::Mat region = patch (cv::Point(i, j), M, 3);
             double sum = cv::sum(region)[0];
 
             if (sum < 255*9 && sum > 0) {
 
-                B.push_back (cv::Point(i, j));
+                
                 region = patch (cv::Point(i, j), M, 8);
                 double sum = cv::sum(region)[0];
 
-                p_.push_back (1/sum);
-
-                start = B.begin();
-                end = B.end();
-                p_begin = p_.begin();
+                priorities.emplace (std::pair<int, int>(i, j), 1/sum);
             }
         }
     }
@@ -159,15 +134,17 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
 
     auto D_ = normalizeDict (D);
 
-    std::vector<cv::Point> B;
-    std::vector<double> priority;
-    getBoundary (B, priority, M);
+    std::map<std::pair<int, int>, double> priorities;
+    getBoundary (priorities, M);
 
-    while (priority.size() != 0)
+    while (priorities.size())
     {
         /*Choose patch with max priority*/
-        auto it = std::max_element (priority.begin(), priority.end()) - priority.begin();
-        cv::Point center = B[it];
+        auto it = std::max_element (priorities.begin(), priorities.end(),
+                                 [](const std::pair<std::pair<int, int>, double>& x,
+                                    const std::pair<std::pair<int, int>, double>& y)
+                                    { return x.second < y.second; });
+        const cv::Point center (it->first.first, it->first.second);
 
         /*Reshape patch into a vector*/
         auto X = patch (center, I, 8);
@@ -216,13 +193,13 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         // cv::namedWindow ("Modified Patch", cv::WINDOW_NORMAL);
         // cv::imshow ("Modified Patch", Xsz);
 
-        cv::waitKey (10000);
+        cv::waitKey (1);
 
         /*Remove this patch from mask*/
         maskP.setTo (0);
 
         /*Update the boundary and priority*/
-        updateBoundary (B, priority, M, center, it);
+        updateBoundary (priorities, M, center, 0);
 
         // cv::Mat mod = I (cv::Range(center.x - 3, center.x + 4),
         //                  cv::Range(center.y - 3, center.y + 4));
