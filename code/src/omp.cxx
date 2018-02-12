@@ -1,18 +1,22 @@
 #include "../include/omp.h"
 
 #include <vector>
+#include <iostream>
 
 cv::Mat_<double> omp (const cv::Mat_<double>& Dict, const cv::Mat_<double>& X, const double sparcity)
 {
 
     cv::Mat_<double> phi;
-    cv::Mat_<double> r = X.clone();
     cv::Mat_<double> a;
+    cv::Mat r = X.clone();
+    r.convertTo (r, CV_64FC1);
 
     int t = 0;
     const int N = Dict.cols;
 
     std::vector<int> columns;
+
+    std::cout << "Dict size: " << Dict.size() << std::endl;
 
     while (t != sparcity)
     {
@@ -21,19 +25,31 @@ cv::Mat_<double> omp (const cv::Mat_<double>& Dict, const cv::Mat_<double>& X, c
 
         for (int i = 0; i < N; ++i)
         {
-            double product = r.dot (Dict.col(i));
+
+            cv::Mat col = Dict.col(i);
+            col.convertTo (col, CV_64FC1);
+
+            auto prod = (r.dot (col));
+            double product = prod;
             if (product >= maxproduct) {
                 maxproduct = product;
                 maxid = i;
             }
         }
 
-        phi.col(t) = Dict.col(maxid);
+        if (phi.empty())
+            phi = Dict.col(maxid);
+        else
+            cv::hconcat (phi, Dict.col(maxid), phi);
+
         columns.push_back (maxid);
 
-        a = (phi.t().mul(phi)).inv(cv::DECOMP_SVD).mul(phi.t()).mul(X);
+        auto phi_ = (phi.t() * phi).inv(cv::DECOMP_SVD);
 
-        r = X - phi.mul(a);
+        a = phi_ * phi.t();
+        a = a * X;
+
+        r = X - (phi * a);
 
         ++t;
     }

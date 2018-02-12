@@ -35,8 +35,8 @@ void mouseCB(int event, int x, int y, int flags, void* userdata)
             src.copyTo(cloneimg);
             namedWindow("Masked Image", WINDOW_NORMAL);
             imshow ("Masked Image", masked);
-            imwrite ("../images/mask.JPG", mask);
-            imwrite ("../images/masked.JPG", masked);
+            imwrite ("../images/mask.png", mask);
+            imwrite ("../images/masked.png", masked);
         }
     }
 
@@ -46,7 +46,7 @@ void mouseCB(int event, int x, int y, int flags, void* userdata)
             line(img,Point(x,y),pts[pts.size()-1],Scalar(0, 0, 0), 10);
 
         pts.push_back(Point(x,y));
-        imwrite ("../images/maskedimage.JPG", img);
+        imwrite ("../images/maskedimage.png", img);
         imshow("Create Mask", img);
     }
 }
@@ -57,7 +57,7 @@ int main (int argc, const char** argv)
     src = imread(argv[1]);
     if(src.empty())
     {
-        std::cout << "INVALID Image" << std::endl;
+        std::cout << "Please specify relative path to an image" << std::endl;
         return -1;
     }
 

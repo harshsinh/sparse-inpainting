@@ -1,28 +1,43 @@
 #include "../include/irls.h"
+#include <iostream>
 
-cv::Mat_<double> irls (const cv::Mat_<double>& Dict, const cv::Mat_<double>& X, const double epsilon)
+cv::Mat updateW (const cv::Mat_<double>& a)
+{
+
+    cv::Mat_<double> w = cv::Mat_<double>::eye (a.rows, a.rows) * a;
+
+    w = cv::Mat::diag (w);
+    w = (w * a);
+    w = cv::Mat::diag (w);
+
+    return w;
+}
+
+cv::Mat_<double> irls (const cv::Mat_<double>& D, const cv::Mat_<double>& X, const double epsilon)
 {
 
     cv::Mat_<double> r = X.clone();
-    cv::Mat_<double> a = cv::Mat_<double>::ones (r.size());
-    cv::Mat_<double> w = cv::Mat_<double>::eye (r.rows, r.rows) * a;
+    cv::Mat_<double> a = cv::Mat_<double>::ones (D.cols, 1);
+    cv::Mat_<double> w = cv::Mat_<double>::eye (D.cols, D.cols);
     
-    
-    w = w * a;
+    r.convertTo (r, CV_64FC1);
 
-    cv::Mat_<double> norm = (r.t().mul(r));
-    double error = norm.at<double>(0, 0);
+    w = updateW (a);
+
+    double error = cv::norm(r);
 
     while (error > epsilon)
     {
-        auto minor_product = (Dict * w) * (w * Dict.t());
-        a = w.mul(w) * Dict.t() * (minor_product.inv(cv::DECOMP_SVD)) * X;
+        auto minor_product = (D * (w * w) * D.t());
+        a = (w * w) * D.t() * (minor_product.inv(cv::DECOMP_SVD)) * X;
 
-        w = cv::Mat_<double>::eye (X.rows, X.rows) * a;
-        w = w * a;
+        w = updateW (a);
 
-        cv::Mat_<double> norm = (r.t().mul(r));
-        double error = norm.at<double>(0, 0);
+        r = X - D*a;
+        
+        std::cout << "Size of a: " << a.size() << std::endl;
+        error = cv::norm(r);
+        std::cout << "Error: " << error << std::endl;
     }
 
     return a;
