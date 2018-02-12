@@ -11,10 +11,10 @@ cv::Mat normalizeVec (const cv::Mat_<double>& r);
 
 cv::Mat_<double> normalizeDict (const cv::Mat_<double>& dict);
 
-cv::Mat removeRows (const cv::Mat_<double>& mat, const cv::Mat_<bool>& rows_);
+cv::Mat removeRows (const cv::Mat& mat, const cv::Mat_<bool>& rows_);
 
 void getBoundary (std::vector<cv::Point>& B, std::vector<double>& priority,
-                  cv::Mat_<double>& M);
+                  cv::Mat& M);
 
 void updateBoundary (std::vector<cv::Point>& B, std::vector<double>& p_,
                      cv::Mat& M, cv::Point Last, int LastID);

@@ -54,7 +54,7 @@ cv::Mat_<double> normalizeDict (const cv::Mat_<double>& dict)
     return normed_D;
 }
 
-cv::Mat removeRows (const cv::Mat_<double>& mat, const cv::Mat_<bool>& rows_)
+cv::Mat removeRows (const cv::Mat& mat, const cv::Mat_<bool>& rows_)
 {
 
     cv::Mat removed_mat;
@@ -73,7 +73,7 @@ cv::Mat removeRows (const cv::Mat_<double>& mat, const cv::Mat_<bool>& rows_)
 
 void getBoundary (std::vector<cv::Point>& B,
                   std::vector<double>& priority,
-                  cv::Mat_<double>& M)
+                  cv::Mat& M)
 {
 
     B.clear();
@@ -89,6 +89,7 @@ void getBoundary (std::vector<cv::Point>& B,
             if (sum < 255*9 && sum > 0) {
 
                 std::cout << "sum of region " << cv::Point(i, j) << ": " << sum << std::endl;
+                
                 B.push_back (cv::Point(i, j));
                 region = patch (cv::Point(i, j), M, 8);
                 double sum = cv::sum(region)[0];
@@ -119,8 +120,12 @@ void updateBoundary (std::vector<cv::Point>& B, std::vector<double>& p_,
 
             if (f != end) {
 
-                B.erase (f);
                 p_.erase ((f - start) + p_begin);
+                B.erase (f);
+                
+                start = B.begin();
+                end = B.end();
+                p_begin = p_.begin();
 
             }
 
@@ -129,13 +134,17 @@ void updateBoundary (std::vector<cv::Point>& B, std::vector<double>& p_,
             cv::Mat region = patch (cv::Point(i, j), M, 3);
             double sum = cv::sum(region)[0];
 
-            if (sum < 255*64 && sum > 255*16) {
+            if (sum < 255*9 && sum > 0) {
 
                 B.push_back (cv::Point(i, j));
                 region = patch (cv::Point(i, j), M, 8);
                 double sum = cv::sum(region)[0];
 
                 p_.push_back (1/sum);
+
+                start = B.begin();
+                end = B.end();
+                p_begin = p_.begin();
             }
         }
     }
@@ -147,8 +156,9 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
                                 const double Value, const std::string& Method)
 {
 
-    cv::Mat_<double> I = Image.clone();
-    cv::Mat_<double> M = Mask.clone();
+    cv::Mat_<double> I = Image.clone() / 255;
+    cv::Mat M;
+    Mask.convertTo (M, CV_8UC1); 
     cv::Mat_<double> D = Dictionary.clone();
 
     auto D_ = normalizeDict (D);
@@ -171,35 +181,20 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         X_ = X_.reshape(0, X.rows*X.cols);
         
         auto maskP = patch (center, M, 8);
-        maskP = maskP.clone();
-        auto maskP_ = maskP.reshape(0, maskP.rows * maskP.cols);
-
-        /*Remove this patch from mask*/
-        cv::Mat aux = M(cv::Range(center.x - 3, center.x + 4),
-                         cv::Range(center.y - 3, center.y + 4));// = cv::Mat_<double>::zeros(8, 8);
-        cv::Mat zeros = cv::Mat_<double>::zeros(8, 8);
-        zeros.copyTo (aux);
-
-        /*Update the boundary and priority*/
-        updateBoundary (B, priority, M, center, it);
+        auto maskP_ = maskP.clone();
+        maskP_ = maskP_.reshape(0, maskP.rows * maskP.cols);
 
         /*Remove the rows from the vector that have the error bits*/
         std::cout << "X_ size, D size: " << X_.size() << ", " << D.size() << std::endl;
         auto X_reduced = removeRows (X_, maskP);
-        const auto& D_reduced = removeRows (D, maskP);
-
-        /*Normalize all the involved vectors*/
-        X_ = X_/255;
-
-        auto X_reduced_ = X_reduced/255;
-        auto D_reduced_ = normalizeDict (D_reduced);
+        const auto& D_reduced = removeRows (D_, maskP);
 
         /*Reconstruct using the original dictionary*/
         cv::Mat_<double> a;
         if (Method == "IRLS")
-            a = irls (D_reduced_, X_reduced_, Value);
+            a = irls (D_reduced, X_reduced, Value);
         else
-            a = omp (D_reduced_, X_reduced_, Value);
+            a = omp (D_reduced, X_reduced, Value);
 
         cv::Mat R = D_ * a;
 
@@ -212,22 +207,37 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
 
         cv::resize (X, Xsz, cv::Size (160, 160), 0, 0, cv::INTER_NEAREST);
         cv::resize (R, Rsz, cv::Size (160, 160), 0, 0, cv::INTER_NEAREST);
-        cv::resize (M, maskPsz, cv::Size (160, 160), 0, 0, cv::INTER_NEAREST);
+        cv::resize (maskP, maskPsz, cv::Size (160, 160), 0, 0, cv::INTER_NEAREST);
 
         cv::namedWindow ("image", cv::WINDOW_NORMAL);
-        cv::imshow ("image", I/255);
-        
-        cv::imshow ("Mask", maskPsz);
+        cv::imshow ("image", I);
+
+        // cv::imshow ("Complete Mask", M);        
+        // cv::imshow ("Mask", maskPsz);
         cv::imshow ("Selected Patch", Xsz);
         cv::imshow ("Proposed Patch", Rsz);
 
-        cv::waitKey (5);
 
-        std::cout << "R type: " << R.type() << std::endl;
+        std::cout << "R type: " << R.type() << "R.size" << R.size()  << std::endl;
+        std::cout << "maskP_ size" << maskP_.size() << std::endl;
+        std::cout << "X size" << X.size() << std::endl;
 
-        maskP.convertTo (maskP, CV_8U);
-
+        std::cout << "maskP type" << maskP.type() << std::endl;
+        // maskP.convertTo (maskP, CV_8U);
+        std::cout << "maskP type" << maskP.type() << std::endl;
         R.copyTo (X, maskP);
+        
+        cv::resize (X, Xsz, cv::Size (160, 160), 0, 0, cv::INTER_NEAREST);
+        cv::namedWindow ("Modified Patch", cv::WINDOW_NORMAL);
+        // cv::imshow ("Modified Patch", Xsz);
+
+        cv::waitKey (10);
+
+        /*Remove this patch from mask*/
+        maskP.setTo (0);
+
+        /*Update the boundary and priority*/
+        updateBoundary (B, priority, M, center, it);
 
         // cv::Mat mod = I (cv::Range(center.x - 3, center.x + 4),
         //                  cv::Range(center.y - 3, center.y + 4));
@@ -236,5 +246,5 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         // cv::imshow ("image", I);
     }
 
-    return I/255;
+    return I;
 }
