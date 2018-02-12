@@ -17,8 +17,6 @@ cv::Mat_<double> omp (const cv::Mat_<double>& Dict, const cv::Mat_<double>& X, c
 
     std::vector<int> columns;
 
-    std::cout << "Dict size: " << Dict.size() << std::endl;
-
     while (t != sparcity)
     {
         double maxproduct = 0;

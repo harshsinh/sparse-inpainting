@@ -87,8 +87,6 @@ void getBoundary (std::vector<cv::Point>& B,
             double sum = cv::sum(region)[0];
 
             if (sum < 255*9 && sum > 0) {
-
-                std::cout << "sum of region " << cv::Point(i, j) << ": " << sum << std::endl;
                 
                 B.push_back (cv::Point(i, j));
                 region = patch (cv::Point(i, j), M, 8);
@@ -129,8 +127,6 @@ void updateBoundary (std::vector<cv::Point>& B, std::vector<double>& p_,
 
             }
 
-            std::cout << "Point: " << cv::Point(i, j) << std::endl;
-
             cv::Mat region = patch (cv::Point(i, j), M, 3);
             double sum = cv::sum(region)[0];
 
@@ -167,8 +163,6 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
     std::vector<double> priority;
     getBoundary (B, priority, M);
 
-    std::cout << "sz: " << priority.size() << std::endl;
-
     while (priority.size() != 0)
     {
         /*Choose patch with max priority*/
@@ -185,7 +179,6 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         maskP_ = maskP_.reshape(0, maskP.rows * maskP.cols);
 
         /*Remove the rows from the vector that have the error bits*/
-        std::cout << "X_ size, D size: " << X_.size() << ", " << D.size() << std::endl;
         auto X_reduced = removeRows (X_, maskP);
         const auto& D_reduced = removeRows (D_, maskP);
 
@@ -217,21 +210,13 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         cv::imshow ("Selected Patch", Xsz);
         cv::imshow ("Proposed Patch", Rsz);
 
-
-        std::cout << "R type: " << R.type() << "R.size" << R.size()  << std::endl;
-        std::cout << "maskP_ size" << maskP_.size() << std::endl;
-        std::cout << "X size" << X.size() << std::endl;
-
-        std::cout << "maskP type" << maskP.type() << std::endl;
-        // maskP.convertTo (maskP, CV_8U);
-        std::cout << "maskP type" << maskP.type() << std::endl;
         R.copyTo (X, maskP);
         
         cv::resize (X, Xsz, cv::Size (160, 160), 0, 0, cv::INTER_NEAREST);
-        cv::namedWindow ("Modified Patch", cv::WINDOW_NORMAL);
+        // cv::namedWindow ("Modified Patch", cv::WINDOW_NORMAL);
         // cv::imshow ("Modified Patch", Xsz);
 
-        cv::waitKey (10);
+        cv::waitKey (10000);
 
         /*Remove this patch from mask*/
         maskP.setTo (0);
