@@ -6,7 +6,7 @@
 #include <string>
 
 const std::string topdir = "../";
-const std::string resultsdir = "../images/results/";
+const std::string resultsdir = "../images/results/scripts_/";
 
 int main (int argc, char** argv)
 {
@@ -31,16 +31,17 @@ int main (int argc, char** argv)
 
     cv::Mat result = sparseInpaint (image, mask, dictionary, value, method);
 
-    std::string name = resultsdir + method + std::to_string(D_size) +
-                              "_" + std::to_string(value) + ".JPG";
+    std::string name = resultsdir + method + argv[3] +
+                              "_" + argv[2] + ".JPG";
 
 
     std::cout << result.size() << std::endl;
+    std::cout << "name: " << name << std::endl;
     cv::imwrite (name, result);
     // cv::namedWindow ("Masked Image", cv::WINDOW_NORMAL);
     // cv::namedWindow ("Result: " + method, cv::WINDOW_NORMAL);
     // cv::imshow ("Masked Image", image);
     // cv::imshow ("Result: " + method, result);
-    cv::waitKey(0);
+    // cv::waitKey(0);
     return 0;
 }

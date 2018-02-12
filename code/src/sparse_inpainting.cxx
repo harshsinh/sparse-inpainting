@@ -186,7 +186,7 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
 
         // cv::imshow ("Complete Mask", M);        
         // cv::imshow ("Mask", maskPsz);
-        if (count == 0)
+        // if (count == 0)
         {
             cv::imshow ("Selected Patch", Xsz);
             cv::imshow ("Proposed Patch", Rsz);

@@ -4,11 +4,10 @@
 cv::Mat updateW (const cv::Mat_<double>& a)
 {
 
-    cv::Mat_<double> w = cv::Mat_<double>::eye (a.rows, a.rows) * a;
+    cv::Mat w;
+    cv::pow (a, 1.1, w);
 
-    w = cv::Mat::diag (w);
-    w = (w * a);
-    w = cv::Mat::diag (w);
+    w = cv::Mat::diag(w);
 
     return w;
 }

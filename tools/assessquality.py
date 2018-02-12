@@ -4,7 +4,7 @@ import numpy
 import glob
 
 image_path = "../images/"
-results = glob.glob(image_path+"results/*.JPG")
+results = glob.glob(image_path+"results/scripts/*.JPG")
 
 original  = scipy.misc.imread (image_path + "original.JPG").astype(numpy.float32)
 
