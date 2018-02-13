@@ -38,10 +38,6 @@ int main (int argc, char** argv)
     std::cout << result.size() << std::endl;
     std::cout << "name: " << name << std::endl;
     cv::imwrite (name, result);
-    // cv::namedWindow ("Masked Image", cv::WINDOW_NORMAL);
-    // cv::namedWindow ("Result: " + method, cv::WINDOW_NORMAL);
-    // cv::imshow ("Masked Image", image);
-    // cv::imshow ("Result: " + method, result);
-    // cv::waitKey(0);
+    cv::waitKey(0);
     return 0;
 }

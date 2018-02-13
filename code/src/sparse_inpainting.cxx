@@ -188,8 +188,8 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         // cv::imshow ("Mask", maskPsz);
         // if (count == 0)
         // {
-            // cv::imshow ("Selected Patch", Xsz);
-            // cv::imshow ("Proposed Patch", Rsz);
+            cv::imshow ("Selected Patch", Xsz);
+            cv::imshow ("Proposed Patch", Rsz);
         //     count++;
         // }
 
@@ -211,7 +211,7 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         //                  cv::Range(center.y - 3, center.y + 4));
         // X.copyTo (mod);
 
-        // cv::imshow ("image", I);
+        cv::imshow ("image", I);
     }
 
     return I*255;
