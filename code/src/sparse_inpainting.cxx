@@ -181,17 +181,17 @@ cv::Mat_<double> sparseInpaint (const cv::Mat_<double>& Image,
         cv::resize (R, Rsz, cv::Size (160, 160), 0, 0, cv::INTER_NEAREST);
         cv::resize (maskP, maskPsz, cv::Size (160, 160), 0, 0, cv::INTER_NEAREST);
 
-        cv::namedWindow ("image", cv::WINDOW_NORMAL);
-        cv::imshow ("image", I);
+        // cv::namedWindow ("image", cv::WINDOW_NORMAL);
+        // cv::imshow ("image", I);
 
         // cv::imshow ("Complete Mask", M);        
         // cv::imshow ("Mask", maskPsz);
         // if (count == 0)
-        {
-            cv::imshow ("Selected Patch", Xsz);
-            cv::imshow ("Proposed Patch", Rsz);
-            count++;
-        }
+        // {
+            // cv::imshow ("Selected Patch", Xsz);
+            // cv::imshow ("Proposed Patch", Rsz);
+        //     count++;
+        // }
 
         R.copyTo (X, maskP);
         

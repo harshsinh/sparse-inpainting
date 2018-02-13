@@ -6,7 +6,7 @@
 #include <string>
 
 const std::string topdir = "../";
-const std::string resultsdir = "../images/results/scripts_/";
+const std::string resultsdir = "../images/results/scripts_1000/";
 
 int main (int argc, char** argv)
 {
