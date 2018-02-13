@@ -12,6 +12,3 @@ add_executable (sparse_inpaint code/src/main.cxx
                             code/src/irls.cxx)
 
 target_link_libraries (sparse_inpaint ${OpenCV_LIBS})
-
-add_executable (test code/src/test.cxx code/src/omp.cxx code/src/irls.cxx)
-target_link_libraries (test ${OpenCV_LIBS})

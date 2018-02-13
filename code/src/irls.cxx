@@ -5,7 +5,7 @@ cv::Mat updateW (const cv::Mat_<double>& a)
 {
 
     cv::Mat w;
-    cv::pow (a, 10, w);
+    cv::pow (a, 1.1, w);
 
     w = cv::Mat::diag(w);
 
